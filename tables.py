@@ -58,6 +58,7 @@ with open(country_filename, mode='w', newline='', encoding='utf-8') as country_f
 print("Файл country.csv успешно создан в папке 'data'.")
 
 # Запись городов в файл city.csv
+
 with open(populated_places_filename, mode='r', encoding='utf-8') as places_file, \
         open(city_filename, mode='w', newline='', encoding='utf-8') as city_file:
     places_reader = csv.reader(places_file)
@@ -65,13 +66,17 @@ with open(populated_places_filename, mode='r', encoding='utf-8') as places_file,
     writer = csv.writer(city_file)
     writer.writerow(["identidier", "country", "description", "latitude", "longitude", "dataset"])  # Запись заголовка
     city_id = 1
+    unique_cities = set()
     for row in places_reader:
         name = row[0].strip()  # Название населенного пункта
         latitude = row[1].strip()  # Широта
         longitude = row[2].strip()  # Долгота
-        if name in cities:
-            (country_id, _), data = cities[name]
-            writer.writerow([city_id, country_id, name, latitude, longitude, data])
+        if name not in unique_cities:
+            unique_cities.add(name)
+            if name in cities:
+                (country_id, _), data = cities[name]
+                writer.writerow([city_id, country_id, name, latitude, longitude, data])
+                city_id += 1
             city_id += 1
 
 print("Файл city.csv успешно создан в папке 'data'.")
